@@ -14,13 +14,13 @@ public class Symbol {
         return name;
     }
 
-    public static Symbol symbol(String n) {
-        String u = n.intern();
-        Symbol s = (Symbol) dict.get(u);
-        if (s == null) {
-            s = new Symbol(u);
-            dict.put(u, s);
+    public static Symbol symbol(String sym) {
+        String symTemp = sym.intern();
+        Symbol sVar = (Symbol) dict.get(symTemp);
+        if (sVar == null) {
+            sVar = new Symbol(u);
+            dict.put(symTemp, sVar);
         }
-        return s;
+        return symTemp;
     }
 }
