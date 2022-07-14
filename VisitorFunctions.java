@@ -33,7 +33,7 @@ public class VisitorFunctions {
         Set<String> temp_set = new HashSet<>();
 
         for (int i = 0; i < n.size(); i++) {
-            String temp_string = VisitorFunctions.methodName.((MethodDeclaration) n.elementAt(i));
+            String temp_string = VisitorFunctions.methodName((MethodDeclaration) n.elementAt(i));
             if (temp_set.contains(temp_string)) {
                 return false;
             } else {
@@ -65,7 +65,7 @@ public class VisitorFunctions {
         return i.f0.toString();
     }
 
-    public static checkSetContains(Set<String> set, NodeListOptional n) {
+    public static boolean checkSetContains(Set<String> set, NodeListOptional n) {
         for (int i = 0; i < n.size(); i++) {
             String temp = VisitorFunctions.methodName((MethodDeclaration) n.elementAt(i));
             if (set.contains(temp)) {

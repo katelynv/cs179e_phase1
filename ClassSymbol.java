@@ -1,7 +1,7 @@
 import java.util.HashMap;
 import java.util.Set;
 
-public class ClasSymbol {
+public class ClassSymbol {
     private Symbol name;
     private HashMap<Symbol, String> variables; 
     private HashMap<String, FunctionSymbol> functions; 

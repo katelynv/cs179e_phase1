@@ -7,8 +7,8 @@ import visitor.*;
 public class FirstPassVisitor extends DepthFirstVisitor {
     ErrorMsg error = new ErrorMsg();
     private SymbolTable symbol_table = new SymbolTable();
-    private ClassSymbol class;
-    private MethodSymbol method;
+    private ClassSymbol current_class;
+    private FunctionSymbol current_function;
 
     public boolean errors() {
         return error.errors;
@@ -36,17 +36,17 @@ public class FirstPassVisitor extends DepthFirstVisitor {
     public void visit (MainClass n) {
         String className = VisitorFunctions.className(n);
         symbol_table.addClass(className);
-        class = symbol_table.getClass(className);
-        class.addMethod("main", "void");
-        method = class.getMethod("main");
+        current_class = symbol_table.getClass(className);
+        current_class.addFunction("main", "void");
+        current_function = current_class.getFunction("main");
         n.f14.accept(this);
     }
 
     public void visit (ClassDeclaration n) {
         String className = VisitorFunctions.className(n);
         symbol_table.addClass(className);
-        class = symbol_table.getClass(className);
-        method = null;
+        current_class = symbol_table.getClass(className);
+        current_function = null;
         if (VisitorFunctions.checkId(n.f3)) {
             n.f3.accept(this);
         } else {
@@ -63,8 +63,8 @@ public class FirstPassVisitor extends DepthFirstVisitor {
     public void visit(ClassExtendsDeclaration n) {
         string className = VisitorFunctions.className(n);
         symbol_table.addClass(className);
-        class = symbol_table.getClass(className);
-        String temp_class = VisitorFunctions.getClass(n.f3);
+        current_class = symbol_table.getClass(className);
+        String temp_class = VisitorFunctions.getId(n.f3);
         ClassSymbol temp_classSymbol = symbol_table.getClass(temp_class);
         Set<String> temp_methods = temp_classSymbol.getMethodNames();
         if (VisitorFunctions.checkSetContains(temp_methods, n.f6)) {
@@ -85,8 +85,8 @@ public class FirstPassVisitor extends DepthFirstVisitor {
     }
 
     public void visit(MethodDeclaration n) {
-        class.addMethod(VisitorFunctions.methodName(n), VisitorFunctions.methodType(n));
-        method = class.getMethod(VisitorFunctions.methodName(n));
+        current_class.addMethod(VisitorFunctions.methodName(n), VisitorFunctions.methodType(n));
+        current_function = current_class.getFunction(VisitorFunctions.methodName(n));
         if (n.f4.node != null) {
             if (VisitorFunctions.checkParameter((FormalParameterList) n.f4.node)) {
                 n.f4.accept(this);
@@ -103,16 +103,16 @@ public class FirstPassVisitor extends DepthFirstVisitor {
     }
 
     public void visit(VarDeclaration n) {
-        if (method == null && class != null) {
-            class.addFields(VisitorFunctions.getId(n.f1), VisitorFunctions.getType(n.f0));
+        if (current_function == null && current_class != null) {
+            current_class.addFields(VisitorFunctions.getId(n.f1), VisitorFunctions.getType(n.f0));
         } else if (method != null) {
-            method.addLocal(VisitorFunctions.getId(n.f1), VisitorFunctions.getType(n.f0));
+            current_function.addLocal(VisitorFunctions.getId(n.f1), VisitorFunctions.getType(n.f0));
         }
     }
 
     public void visit(FormalParameter n) {
-        if (method != null && class != null) {
-            method.addParam(VisitorFunctions.getId(n.f1), VisitorFunctions.getType(n.f0));
+        if (current_function != null && current_class != null) {
+            current_function.addParameter(VisitorFunctions.getId(n.f1), VisitorFunctions.getType(n.f0));
         }
     }
 }
