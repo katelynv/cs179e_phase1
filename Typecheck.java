@@ -8,7 +8,7 @@ public class Typecheck {
             Node root = parser.Goal();
             FirstPassVisitor first = new FirstPassVisitor();
             root.accept(first);
-            if (first.getErrors()) {
+            if (first.errors()) {
                 System.out.println("Error!!!");
                 System.exit(1);
             }

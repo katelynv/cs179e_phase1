@@ -25,7 +25,7 @@ public class FirstPassVisitor extends DepthFirstVisitor {
                 classNames.addNode(((TypeDeclaration) n.f1.elementAt(i)).f0.choice);
             }
         }
-        if (Helper.checkClass(classNames)) {
+        if (VisitorFunctions.checkClass(classNames)) {
             n.f0.accept(this);
             n.f1.accept(this);
         } else {
@@ -56,17 +56,17 @@ public class FirstPassVisitor extends DepthFirstVisitor {
         if (VisitorFunctions.checkMethod(n.f4)) {
             n.f4.accept(this);
         } else {
-            errr.sendError("ERROR: Method names are the same");
+            error.sendError("ERROR: Method names are the same");
         }
     }
 
     public void visit(ClassExtendsDeclaration n) {
-        string className = VisitorFunctions.className(n);
+        String className = VisitorFunctions.className(n);
         symbol_table.addClass(className);
         current_class = symbol_table.getClass(className);
         String temp_class = VisitorFunctions.getId(n.f3);
         ClassSymbol temp_classSymbol = symbol_table.getClass(temp_class);
-        Set<String> temp_methods = temp_classSymbol.getMethodNames();
+        Set<String> temp_methods = temp_classSymbol.getFunctionNames();
         if (VisitorFunctions.checkSetContains(temp_methods, n.f6)) {
             if (VisitorFunctions.checkId(n.f5)) {
                 n.f5.accept(this);
@@ -85,7 +85,7 @@ public class FirstPassVisitor extends DepthFirstVisitor {
     }
 
     public void visit(MethodDeclaration n) {
-        current_class.addMethod(VisitorFunctions.methodName(n), VisitorFunctions.methodType(n));
+        current_class.addFunction(VisitorFunctions.methodName(n), VisitorFunctions.methodType(n));
         current_function = current_class.getFunction(VisitorFunctions.methodName(n));
         if (n.f4.node != null) {
             if (VisitorFunctions.checkParameter((FormalParameterList) n.f4.node)) {
@@ -104,8 +104,8 @@ public class FirstPassVisitor extends DepthFirstVisitor {
 
     public void visit(VarDeclaration n) {
         if (current_function == null && current_class != null) {
-            current_class.addFields(VisitorFunctions.getId(n.f1), VisitorFunctions.getType(n.f0));
-        } else if (method != null) {
+            current_class.addVariables(VisitorFunctions.getId(n.f1), VisitorFunctions.getType(n.f0));
+        } else if (current_function != null) {
             current_function.addLocal(VisitorFunctions.getId(n.f1), VisitorFunctions.getType(n.f0));
         }
     }

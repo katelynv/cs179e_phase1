@@ -18,9 +18,9 @@ public class Symbol {
         String symTemp = sym.intern();
         Symbol sVar = (Symbol) dict.get(symTemp);
         if (sVar == null) {
-            sVar = new Symbol(u);
+            sVar = new Symbol(symTemp);
             dict.put(symTemp, sVar);
         }
-        return symTemp;
+        return sVar;
     }
 }

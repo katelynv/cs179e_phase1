@@ -34,7 +34,7 @@ public class FunctionSymbol {
     }
 
     public String getParameterType(String s) {
-        return this.parameters.get(symbol.symbol(s));
+        return this.parameters.get(Symbol.symbol(s));
     }
 
     public int parameterSize() {

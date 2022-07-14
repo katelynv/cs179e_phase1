@@ -9,7 +9,7 @@ public class SymbolTable {
     }
 
     public void addClass(String s) {
-        ClassSymbol temp = new ClassSymbol(x);
+        ClassSymbol temp = new ClassSymbol(s);
         table.put(s, temp);
     }
 

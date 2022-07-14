@@ -109,13 +109,13 @@ public class VisitorFunctions {
         Node n = t.f0.choice;
         String type = "";
         if (n instanceof IntegerType) {
-            type = ((IntegerType) x).f0.toString();
+            type = ((IntegerType) n).f0.toString();
         } else if (n instanceof BooleanType) {
-            type = ((BooleanType) x).f0.toString();
+            type = ((BooleanType) n).f0.toString();
         } else if (n instanceof ArrayType) {
             type = "int []";
         } else if (n instanceof Identifier) {
-            type = getId((Identifier)x);
+            type = getId((Identifier) n);
         }
         return type;
     }

@@ -29,6 +29,14 @@ public class ClassSymbol {
     }
 
     public String getVariable(String s) {
-        return this.variables.get(Symbol.symbol(name));
+        return this.variables.get(Symbol.symbol(s));
+    }
+
+    public int functionSize() {
+        return functions.size();
+    }
+
+    public Set<String> getFunctionNames() {
+        return functions.keySet();
     }
 }
