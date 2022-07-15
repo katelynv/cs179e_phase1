@@ -25,7 +25,7 @@ public class FirstPassVisitor extends DepthFirstVisitor {
                 classNames.addNode(((TypeDeclaration) n.f1.elementAt(i)).f0.choice);
             }
         }
-        if (VisitorFunctions.checkClass(classNames)) {
+        if (VisitorFunctions.checkClass(classNames) == true) {
             n.f0.accept(this);
             n.f1.accept(this);
         } else {

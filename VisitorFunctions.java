@@ -57,8 +57,8 @@ public class VisitorFunctions {
             } else {
                 temp_set.add(temp_string);
             }
-            return true;
         }
+        return true;
     }
 
     public static String getId(Identifier i) {
