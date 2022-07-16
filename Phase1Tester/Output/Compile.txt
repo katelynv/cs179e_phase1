@@ -1,0 +1,2 @@
+Note: Phase1Tester\Output\Unzipped\hw1\Symbol.java uses unchecked or unsafe operations.
+Note: Recompile with -Xlint:unchecked for details.
