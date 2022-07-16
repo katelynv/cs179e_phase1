@@ -2,14 +2,14 @@ import syntaxtree.*;
 import visitor.*;
 
 public class SecondPassVisitor extends GJDepthFirst<string, Symboltable> {
-    private SymbolTable sTableVar;
-    private ClassSymbol currClass;
-    private MethodSymbol currFunction;
+    private SymbolTable symbol_table;
+    private ClassSymbol current_class;
+    private FunctionSymbol current_function;
     private boolean errorCheck = false;
 
     public SecondPassVisitor(SymbolTable Table)
     {
-        this.sTableVar=Table;
+        this.symbol_table=Table;
     }
 
     public string visit(Goal var,SymbolTable tableVar)
@@ -21,8 +21,8 @@ public class SecondPassVisitor extends GJDepthFirst<string, Symboltable> {
 
     public string visit(MainClass var,SymbolTable tableVar)
     {
-        currClass=sTableVar.getClass(.className(n));
-        currFunction= currClass.getFunction("main");
+        current_class=symbol_table.getClass(VisitorFunctions.className(n));
+        current_function= current_class.getFunction("main");
         var.f15.accept(this,tableVar);
         return null;
 
@@ -30,17 +30,17 @@ public class SecondPassVisitor extends GJDepthFirst<string, Symboltable> {
 
     public string visit(ClassDeclaration var,SymbolTable tableVar)
     {
-        currClass = sTableVar.getClass(.className(x));
-        currFunction=null;
-        var.f4.accept(this,sTableVar);
+        current_class = symbol_table.getClass(VisitorFunctions.className(x));
+        current_function=null;
+        var.f4.accept(this,symbol_table);
         return null;
     }
 
-    public string visit(ClassExtendsDeclaration var,SymbolTable tableVar)
-    {
-        currFunction=currClass.getFunction(.functionName(n));
-        String funt_type= .getType(n.f1);
-        String return_type= var.f10.accept(this,sTableVar);
+   
+
+    public string visit(MethodDeclaration var,SymbolTable tableVar){  current_function=current_class.getFunction(VisitorFunctions.methodName(n));
+        String funt_type= VisitorFunctions.getType(n.f1);
+        String return_type= var.f10.accept(this,symbol_table);
         if(funt_type!= null||funt_type!= ""||return_type!="")
         {
             return_type=getIDtype(returnType);
@@ -50,11 +50,9 @@ public class SecondPassVisitor extends GJDepthFirst<string, Symboltable> {
                 return null;
             }
         }
-        var.f8.accept(this,sTableVar);
+        var.f8.accept(this,symbol_table);
         return null;
     }
-
-    public string visit(MethodDeclaration var,SymbolTable tableVar){}
 
     public string visit(Statement var,SymbolTable tableVar)
     {
@@ -64,7 +62,7 @@ public class SecondPassVisitor extends GJDepthFirst<string, Symboltable> {
 
     public string visit(AssignmentStatement var,SymbolTable tableVar)
     {
-        String id= .getID(var.f0);
+        String id= VisitorFunctions.getId(var.f0);
         String id2= var.f2.accept(this,tableVar);
         if(id!=null&&id2!=null)
         {
@@ -107,10 +105,6 @@ public class SecondPassVisitor extends GJDepthFirst<string, Symboltable> {
         }
     }
 
-    public string visit(Bool var,SymbolTable tableVar){}
-
-    public string visit(Int_type var,SymbolTable tableVar){}
-
     public string visit(PlusExpression var,SymbolTable tableVar)
     {
         String first_var =getIDType(var.f0.accept(this,tableVar));
@@ -148,9 +142,9 @@ public class SecondPassVisitor extends GJDepthFirst<string, Symboltable> {
     }
     public string visit(MessageSend var,SymbolTable tableVar)
     {
-        String functionName=.getID(var.f2);
+        String functionName=VisitorFunctions.getId(var.f2);
         String className=getIDType(var.f0.accept(this,tableVar));
-        ClassSymbol classCheck = sTableVar.getClass(className);
+        ClassSymbol classCheck = symbol_table.getClass(className);
         if(classCheck!=null)
         {
             MethodSymbol classfuncCheck =classCheck.getFunction(functionName);
@@ -161,9 +155,9 @@ public class SecondPassVisitor extends GJDepthFirst<string, Symboltable> {
             }
             else{
 				if(n.f4.node != null){
-					int callSize = getListSize(n.f4.node);
+					int listSize = getListSize(n.f4.node);
 					int functionSize = classfuncCheck.paramSize();
-					if(functionSize != callSize){
+					if(functionSize != listSize){
 						errorCheck = true;
 					}
 				}
@@ -197,12 +191,12 @@ public class SecondPassVisitor extends GJDepthFirst<string, Symboltable> {
 
     public string visit(Identifier var,SymbolTable tableVar)
     {
-        return .getID(var);
+        return VisitorFunctions.getId(var);
     }
 
     public string visit(ThisExpression var,SymbolTable tableVar)
     {
-        return currClass.getClassID();
+        return current_class.getClassID();
     }
 
     public string visit(BracketExpression var,SymbolTable tableVar)
@@ -212,7 +206,7 @@ public class SecondPassVisitor extends GJDepthFirst<string, Symboltable> {
 
     public string visit(Allocationexpression var,SymbolTable tableVar)
     {
-        String className= .getID(var.f1);
+        String className= VisitorFunctions.getId(var.f1);
         return className;
     }
 
@@ -221,5 +215,8 @@ public class SecondPassVisitor extends GJDepthFirst<string, Symboltable> {
         String className= var.f0.choice.accept(this,tableVar);
         return className;
     }
-
+    public boolean errors()
+    {
+        return errorCheck;
+    }
 }
